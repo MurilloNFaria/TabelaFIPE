@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace TabelaFIPE.Modelos;
 
@@ -44,12 +45,19 @@ internal class Marca
         string resposta = await client.GetStringAsync(marcasLink);
 
         var marcas = JsonSerializer.Deserialize<List<Marca>>(resposta);
+
         if (marcas == null)
         {
             throw new InvalidOperationException("Erro ao desserializar a resposta da API.");
         }
 
-        var marcaEncontrada = marcas.FirstOrDefault(m => string.Equals(m.Name, marcaInput, StringComparison.OrdinalIgnoreCase));
+        // padrao regEx = insere modeloinput diretamente no padrao da expressao sem escapar caracteres especiais
+        // \b faz modeloinput ser lido como uma palavra inteira evitando correspondencias parciais
+        var padraoRegEx = $@"\b{Regex.Escape(marcaInput)}\b";
+        // cria um objeto regex com o padrao indicado e define como opçoes o ignorecase
+        var regex = new Regex(padraoRegEx, RegexOptions.IgnoreCase);
+
+        var marcaEncontrada = marcas.FirstOrDefault(m => regex.IsMatch(m.Name!));
 
         if (marcaEncontrada != null)
         {

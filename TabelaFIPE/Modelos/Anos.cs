@@ -24,6 +24,7 @@ internal class Anos
 
     private static void PrintarModeloAnos(List<Anos> modelosAnos)
     {
+        Console.Clear();
         foreach (var m in modelosAnos) // verificando cada item da lista via foreach
         {
             Console.WriteLine(m); // escrevendo todos os itens na tela

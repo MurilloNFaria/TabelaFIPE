@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace TabelaFIPE.Modelos;
 
@@ -48,9 +49,15 @@ internal class Modelo
             throw new InvalidOperationException("Erro ao desserializar a resposta da API.");
         }
 
+        // padrao regEx = insere modeloinput diretamente no padrao da expressao sem escapar caracteres especiais
+        // \b faz modeloinput ser lido como uma palavra inteira evitando correspondencias parciais
+        var padraoRegEx = $@"\b{Regex.Escape(modeloInput)}\b";
+        // cria um objeto regex com o padrao indicado e define como opçoes o ignorecase
+        var regex = new Regex(padraoRegEx, RegexOptions.IgnoreCase);
+
         foreach (var m in modelos)
         {
-            if (m.Name!.Contains(modeloInput, StringComparison.OrdinalIgnoreCase))
+            if (regex.IsMatch(m.Name!))
                 modelosEncontrados.Add(m);
         }
 
@@ -70,7 +77,7 @@ internal class Modelo
         // desserializando em formato de lista do tipo CARRO
 
         Console.WriteLine(modeloEscolhido);
-        Console.WriteLine(modeloEscolhidoLink);
+        Console.WriteLine("Fonte: " + modeloEscolhidoLink);
         // mostrando os dados do modelo escolhido
     }
 

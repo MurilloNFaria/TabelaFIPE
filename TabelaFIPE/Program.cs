@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Text.Json; // ----- para realizar açoes em arquivos json
 using TabelaFIPE.Modelos; // ----- modelos do programa, classes e afins
 
 // acessando a api
@@ -44,8 +43,6 @@ using (HttpClient client = new()) // using httpclient para encerrar o uso apos a
         Console.Write("Escolha um dos IDs acima: ");
         var idEscolhido = Console.ReadLine()!; // pedindo a entrada de um ID da lista de mostrados na tela
 
-        Console.Clear();
-
         string linkAnos = $"{modelosLink}{idEscolhido}/years/";
         // acessando os anos do modelo a partir do id escolhido
 
@@ -67,7 +64,7 @@ using (HttpClient client = new()) // using httpclient para encerrar o uso apos a
     }
     catch (Exception ex)
     {
-        Console.Write(ex.Message);
+        Console.Write(ex.Message + ". . . Pressione (ENTER)");
         Console.ReadKey();
     }
 
