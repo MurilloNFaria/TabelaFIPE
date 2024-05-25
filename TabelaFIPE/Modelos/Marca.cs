@@ -20,11 +20,6 @@ internal class Marca
         }
     }
 
-    public override string ToString()
-    {
-        return $"Nome: {Name}, ID: {ID}\n";
-    }
-
     public static async Task<int> ObterIdMarca(HttpClient client, string marcasLink, string marcaInput)
     {
         if (client == null)
@@ -44,12 +39,8 @@ internal class Marca
 
         string resposta = await client.GetStringAsync(marcasLink);
 
-        var marcas = JsonSerializer.Deserialize<List<Marca>>(resposta);
-
-        if (marcas == null)
-        {
-            throw new InvalidOperationException("Erro ao desserializar a resposta da API.");
-        }
+        var marcas = JsonSerializer.Deserialize<List<Marca>>(resposta) 
+            ?? throw new InvalidOperationException("Erro ao desserializar a resposta da API.");
 
         // padrao regEx = insere modeloinput diretamente no padrao da expressao sem escapar caracteres especiais
         // \b faz modeloinput ser lido como uma palavra inteira evitando correspondencias parciais
@@ -67,5 +58,10 @@ internal class Marca
         {
             throw new MarcaNotFoundException($"A marca '{marcaInput}' não foi encontrada.");
         }
+    }
+
+    public override string ToString()
+    {
+        return $"Nome: {Name}, ID: {ID}\n";
     }
 }

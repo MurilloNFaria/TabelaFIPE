@@ -11,15 +11,17 @@ internal class Anos
     [JsonPropertyName("code")]
     public string? ID { get; set; }
 
-    public static async Task ObterAnos(HttpClient client, string anosLink, string idEscolhido)
+    public static async Task<string> ObterAnos(HttpClient client, string modelosLink, string idEscolhido)
     {
-        string resposta = await client.GetStringAsync(anosLink);
+        string linkAnos = $"{modelosLink}{idEscolhido}/years/";
+        string resposta = await client.GetStringAsync(linkAnos);
         // esperando a resposta de maneira async
 
         var modelosAnos = JsonSerializer.Deserialize<List<Anos>>(resposta)!;
         // desserializando a resposta recebida em json para uma lista do tipo ANOS
 
         PrintarModeloAnos(modelosAnos);
+        return linkAnos;
     }
 
     private static void PrintarModeloAnos(List<Anos> modelosAnos)

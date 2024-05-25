@@ -6,60 +6,21 @@ using (HttpClient client = new()) // using httpclient para encerrar o uso apos a
 {
     try
     {
-
         string apiLink = "https://parallelum.com.br/fipe/api/v2/";
+        string marcasLink = $"{apiLink}cars/brands/";
         // link raiz api
 
 
-        #region Marcas
+        string modelosLink = await ObterInputMarca(client, apiLink, marcasLink);
 
-        string marcasLink = $"{apiLink}cars/brands/";
-        // link acessar marcas
-
-        Console.Write("Digite a marca: ");
-        var marcaInput = Console.ReadLine()!;
-        // pegando o input de marca
-
-        var id = await Marca.ObterIdMarca(client, marcasLink, marcaInput);
-        // metodo obter id compara o que foi digitado com o que existe na API, retornando o id
-
-        Console.Clear();
-        #endregion
+        
+        await ObterInputModelo(client, apiLink, modelosLink);
 
 
-        #region Modelos
-        string modelosLink = $"{marcasLink}{id}/models/";
-        // link para acessar os modelos a partir do id.
+        string linkAnos = await ObterInputAnos(client, apiLink, modelosLink);
 
-        Console.Write("Digite o nome do modelo: ");
-        var modeloInput = Console.ReadLine()!;
-        // pegando input do usuario
-
-        await Modelo.ObterModelo(client, modelosLink, modeloInput);
-        #endregion
-
-
-        #region ID
-        Console.Write("Escolha um dos IDs acima: ");
-        var idEscolhido = Console.ReadLine()!; // pedindo a entrada de um ID da lista de mostrados na tela
-
-        string linkAnos = $"{modelosLink}{idEscolhido}/years/";
-        // acessando os anos do modelo a partir do id escolhido
-
-        await Anos.ObterAnos(client, linkAnos, idEscolhido);
-        #endregion
-
-
-        #region Modelo Escolhido
-        Console.WriteLine("Digite o ano do modelo: ");
-        var anoEscolhido = Console.ReadLine();
-
-        string linkModeloEscolhido = $"{linkAnos}{anoEscolhido}";
-        // definindo o link de acesso com o ano digitado
-
-        await Modelo.ObterModeloEscolhido(client, linkModeloEscolhido);
-        #endregion
-
+        
+        await ObterInputModeloEscolhido(client, apiLink, linkAnos);
 
     }
     catch (Exception ex)
@@ -67,6 +28,46 @@ using (HttpClient client = new()) // using httpclient para encerrar o uso apos a
         Console.Write(ex.Message + ". . . Pressione (ENTER)");
         Console.ReadKey();
     }
-
 }
 
+static async Task<string> ObterInputMarca(HttpClient client, string apiLink, string marcasLink)
+{
+    Console.Write("Digite a marca: ");
+    var marcaInput = Console.ReadLine()!;
+    // pegando o input de marca
+
+    var id = await Marca.ObterIdMarca(client, marcasLink, marcaInput);
+    // metodo obter id compara o que foi digitado com o que existe na API, retornando o id
+
+    Console.Clear();
+
+    return $"{marcasLink}{id}/models/";
+}
+
+static async Task ObterInputModelo(HttpClient client, string apiLink, string modelosLink)
+{
+    Console.Write("Digite o nome do modelo: ");
+    var modeloInput = Console.ReadLine()!;
+    // pegando input do usuario
+
+    await Modelo.ObterModelo(client, modelosLink, modeloInput);
+}
+
+static async Task<string> ObterInputAnos(HttpClient client, string apiLink, string linkAnos)
+{
+    Console.Write("Escolha um dos IDs acima: ");
+    var idEscolhido = Console.ReadLine()!; // pedindo a entrada de um ID da lista de mostrados na tela
+
+    // acessando os anos do modelo a partir do id escolhido
+    
+    return await Anos.ObterAnos(client, linkAnos, idEscolhido);
+}
+
+static async Task ObterInputModeloEscolhido(HttpClient client, string apiLink, string linkAnos)
+{
+    Console.Write("Digite o ano do modelo: ");
+    var anoEscolhido = Console.ReadLine();
+
+    string linkModeloEscolhido = $"{linkAnos}{anoEscolhido}";
+    await Modelo.ObterModeloEscolhido(client, linkModeloEscolhido);
+}
