@@ -71,14 +71,11 @@ internal class Modelo
     public static async Task ObterModeloEscolhido(HttpClient client, string modeloEscolhidoLink)
     {
         string resposta = await client.GetStringAsync(modeloEscolhidoLink);
-        // esperando a resposta da api de maneira async
 
         var modeloEscolhido = JsonSerializer.Deserialize<Carro>(resposta)!;
-        // desserializando em formato de lista do tipo CARRO
 
         Console.WriteLine(modeloEscolhido);
         Console.WriteLine("Fonte: " + modeloEscolhidoLink);
-        // mostrando os dados do modelo escolhido
     }
 
     private static void PrintarModelos(List<Modelo> modelosEncontrados) 

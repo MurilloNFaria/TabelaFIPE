@@ -1,73 +1,51 @@
-﻿using System.Linq;
-using TabelaFIPE.Modelos; // ----- modelos do programa, classes e afins
+﻿using TabelaFIPE.Modelos;
 
-// acessando a api
-using (HttpClient client = new()) // using httpclient para encerrar o uso apos as operaçoes dentro das chaves
+using HttpClient client = new();
+
+Processos programa = new();
+
+while (Processos.Execution)
 {
     try
     {
-        string apiLink = "https://parallelum.com.br/fipe/api/v2/";
-        string marcasLink = $"{apiLink}cars/brands/";
-        // link raiz api
+        string marcasLink = $"{programa.APILink}cars/brands/";
 
+        string modelosLink = await Processos.ObterInputMarca(client, marcasLink);
 
-        string modelosLink = await ObterInputMarca(client, apiLink, marcasLink);
+        await Processos.ObterInputModelo(client, modelosLink);
 
-        
-        await ObterInputModelo(client, apiLink, modelosLink);
+        string linkAnos = await Processos.ObterInputAnos(client, modelosLink);
 
+        await Processos.ObterInputModeloEscolhido(client, linkAnos);
 
-        string linkAnos = await ObterInputAnos(client, apiLink, modelosLink);
-
-        
-        await ObterInputModeloEscolhido(client, apiLink, linkAnos);
-
+        Processos.EncerrarPrograma();
+    }
+    catch (InputException ex)
+    {
+        Processos.MensagemExcecao(ex);
+    }
+    catch (MarcaNotFoundException ex)
+    {
+        Processos.MensagemExcecao(ex);
+    }
+    catch (InvalidOperationException ex)
+    {
+        Processos.MensagemExcecao(ex);
+    }
+    catch (ModeloNotFoundException ex)
+    {
+        Processos.MensagemExcecao(ex);
+    }
+    catch (ArgumentNullException ex)
+    {
+        Processos.MensagemExcecao(ex);
     }
     catch (Exception ex)
     {
-        Console.Write(ex.Message + ". . . Pressione (ENTER)");
-        Console.ReadKey();
+        Processos.MensagemExcecao(ex);
     }
-}
-
-static async Task<string> ObterInputMarca(HttpClient client, string apiLink, string marcasLink)
-{
-    Console.Write("Digite a marca: ");
-    var marcaInput = Console.ReadLine()!;
-    // pegando o input de marca
-
-    var id = await Marca.ObterIdMarca(client, marcasLink, marcaInput);
-    // metodo obter id compara o que foi digitado com o que existe na API, retornando o id
-
-    Console.Clear();
-
-    return $"{marcasLink}{id}/models/";
-}
-
-static async Task ObterInputModelo(HttpClient client, string apiLink, string modelosLink)
-{
-    Console.Write("Digite o nome do modelo: ");
-    var modeloInput = Console.ReadLine()!;
-    // pegando input do usuario
-
-    await Modelo.ObterModelo(client, modelosLink, modeloInput);
-}
-
-static async Task<string> ObterInputAnos(HttpClient client, string apiLink, string linkAnos)
-{
-    Console.Write("Escolha um dos IDs acima: ");
-    var idEscolhido = Console.ReadLine()!; // pedindo a entrada de um ID da lista de mostrados na tela
-
-    // acessando os anos do modelo a partir do id escolhido
-    
-    return await Anos.ObterAnos(client, linkAnos, idEscolhido);
-}
-
-static async Task ObterInputModeloEscolhido(HttpClient client, string apiLink, string linkAnos)
-{
-    Console.Write("Digite o ano do modelo: ");
-    var anoEscolhido = Console.ReadLine();
-
-    string linkModeloEscolhido = $"{linkAnos}{anoEscolhido}";
-    await Modelo.ObterModeloEscolhido(client, linkModeloEscolhido);
+    finally
+    {
+        await Task.Delay(1000);
+    }
 }
