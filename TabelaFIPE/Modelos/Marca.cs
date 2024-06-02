@@ -37,13 +37,13 @@ internal class Marca
             throw new InputException("A marca digitada não pode ser nula ou vazia.");
         }
 
-        string resposta = await client.GetStringAsync(marcasLink);
+        string resposta = await Processos.TentarSolicitacao(client, marcasLink);
 
         var marcas = JsonSerializer.Deserialize<List<Marca>>(resposta) 
             ?? throw new InvalidOperationException("Erro ao desserializar a resposta da API.");
 
         // padrao regEx = insere modeloinput diretamente no padrao da expressao sem escapar caracteres especiais
-        // \b faz modeloinput ser lido como uma palavra inteira evitando correspondencias parciais
+        // \b faz marcainput ser lido como uma palavra inteira evitando correspondencias parciais
         var padraoRegEx = $@"\b{Regex.Escape(marcaInput)}\b";
         // cria um objeto regex com o padrao indicado e define como opçoes o ignorecase
         var regex = new Regex(padraoRegEx, RegexOptions.IgnoreCase);

@@ -36,7 +36,6 @@ internal class Carro
     {
         StringBuilder sb = new();
         Console.Clear();
-        sb.AppendLine($"Tipo do veículo: {VehicleType}");
         sb.AppendLine($"Código FIPE: {CodeFipe}");
         sb.AppendLine($"Nome: {Model}, Ano: {ModelYear}");
         sb.AppendLine($"Marca: {Brand}");

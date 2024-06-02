@@ -38,7 +38,7 @@ internal class Modelo
             throw new InputException("A marca digitada não pode ser nula ou vazia.");
         }
 
-        string resposta = await client.GetStringAsync(modelosLink);
+        string resposta = await Processos.TentarSolicitacao(client,modelosLink);
 
         var modelos = JsonSerializer.Deserialize<List<Modelo>>(resposta)!;
 
@@ -64,13 +64,12 @@ internal class Modelo
         if (modelosEncontrados.Count == 0)
             throw new ModeloNotFoundException($"O modelo '{modeloInput}' não foi encontrada.");
 
-        PrintarModelos(modelosEncontrados);
         return modelosEncontrados;
     }
 
     public static async Task ObterModeloEscolhido(HttpClient client, string modeloEscolhidoLink)
     {
-        string resposta = await client.GetStringAsync(modeloEscolhidoLink);
+        string resposta = await Processos.TentarSolicitacao(client, modeloEscolhidoLink);
 
         var modeloEscolhido = JsonSerializer.Deserialize<Carro>(resposta)!;
 

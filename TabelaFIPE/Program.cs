@@ -4,6 +4,18 @@ using HttpClient client = new();
 
 Processos programa = new();
 
+// possíveis mudanças
+
+// LOGICA MARCADOR - CONTINUAR DE ONDE DEU ERRO
+
+// coletar a marca normal
+// modelo
+// ano do modelo
+// printar modelos deste ano
+
+// verificar o ano de todos os modelos da lista modelosEncontrados
+// printar
+
 while (Processos.Execution)
 {
     try
@@ -14,9 +26,9 @@ while (Processos.Execution)
 
         await Processos.ObterInputModelo(client, modelosLink);
 
-        string linkAnos = await Processos.ObterInputAnos(client, modelosLink);
+        await Processos.ObterInputAnos(client, modelosLink);
 
-        await Processos.ObterInputModeloEscolhido(client, linkAnos);
+        //await Processos.ObterInputModeloEscolhido(client, linkAnos);
 
         Processos.EncerrarPrograma();
     }
